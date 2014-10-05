@@ -3,6 +3,8 @@ var sin = Math.sin;
 var PI = Math.PI;
 var PI_2 = Math.PI / 2;
 
+var THREE = require('three');
+
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
@@ -11,8 +13,6 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 
 var geometry = new THREE.SphereGeometry(3, 100, 100);
 var material = new THREE.MeshBasicMaterial({
-    //color: 0x00ff00,
-    //wireframe: true
     map: THREE.ImageUtils.loadTexture('worldatlas.JPG')
 });
 var cube = new THREE.Mesh( geometry, material );

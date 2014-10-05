@@ -1,0 +1,15 @@
+{
+  "author": "Evgen Filatov",
+  "name": "snake-3d",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=0.11.0"
+  },
+  "dependencies": {
+    "gnode": "^0.1.0",
+    "koa": "^0.12.2",
+    "koa-browserify": "0.0.4",
+    "koa-static": "^1.4.7",
+    "three": "^0.66.4"
+  }
+}
