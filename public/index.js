@@ -2,33 +2,22 @@ var cos = Math.cos;
 var sin = Math.sin;
 var PI = Math.PI;
 var PI_2 = Math.PI / 2;
+var R = 2;
 
 var THREE = require('three');
+var levels = require('./js/levels');
 
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = R;
+camera.rotation.x = PI / 3;
+//camera.rotation.order = 'YXZ';
+
+var scene = levels.random(20);
 
 var renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-var geometry = new THREE.SphereGeometry(3, 100, 100);
-var material = new THREE.MeshBasicMaterial({
-    map: THREE.ImageUtils.loadTexture('worldatlas.JPG')
-});
-var cube = new THREE.Mesh( geometry, material );
-
-scene.add( cube );
-
-
-var R = 3.2
-camera.position.z = R;
-camera.rotation.x = PI_2;
-camera.rotation.order = 'YXZ';
-document.body.appendChild( renderer.domElement );
-
-
-var alpha = 0; teta = 0;
-var v = 0.05;
 window.addEventListener('keypress', function (e) {
     var code = e.keyCode;
     // 119 w
@@ -36,24 +25,18 @@ window.addEventListener('keypress', function (e) {
     // 97 a
     // 100 d
     if (code === 119) {
-        teta += v;
+        camera.position.y += 1;
     }
     if (code === 115) {
-        teta -= v;
+        camera.position.y -= 1;
     }
     if (code === 100) {
-        alpha += v;
+        camera.position.x += 1;
     }
     if (code === 97) {
-        alpha -= v;
+        camera.position.x -= 1;
     }
 
-    camera.position.y = sin(teta) * R;
-    camera.position.z = cos(teta) * cos(alpha) * R;
-    camera.position.x = cos(teta) * sin(alpha) * R;
-
-    camera.rotation.x = PI_2 - teta;
-    camera.rotation.y = alpha;
 });
 
 ;(function renderTick() {
