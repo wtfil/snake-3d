@@ -1,22 +1,29 @@
+var cos = Math.cos;
+var sin = Math.sin;
+var PI = Math.PI;
+var PI_2 = Math.PI / 2;
+
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 
-var geometry = new THREE.BoxGeometry(2,2,2);
+var geometry = new THREE.SphereGeometry(3, 100, 100);
 var material = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,
-    wireframe: true
+    //color: 0x00ff00,
+    //wireframe: true
+    map: THREE.ImageUtils.loadTexture('worldatlas.JPG')
 });
 var cube = new THREE.Mesh( geometry, material );
 
-
-
 scene.add( cube );
 
-var R = 4;
+
+var R = 3.2
 camera.position.z = R;
+camera.rotation.x = PI_2;
+camera.rotation.order = 'YXZ';
 document.body.appendChild( renderer.domElement );
 
 
@@ -41,14 +48,13 @@ window.addEventListener('keypress', function (e) {
         alpha -= v;
     }
 
-    camera.position.y = Math.sin(teta) * R;
-    camera.position.z = Math.cos(teta) * Math.cos(alpha) * R;
-    camera.position.x = Math.cos(teta) * Math.sin(alpha) * R;
+    camera.position.y = sin(teta) * R;
+    camera.position.z = cos(teta) * cos(alpha) * R;
+    camera.position.x = cos(teta) * sin(alpha) * R;
 
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
-    console.log(e)
+    camera.rotation.x = PI_2 - teta;
+    camera.rotation.y = alpha;
 });
-console.log(camera.position);
 
 ;(function renderTick() {
     requestAnimationFrame(renderTick);
