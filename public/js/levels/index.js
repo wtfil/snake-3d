@@ -21,9 +21,22 @@ function mapToGeometry(map) {
 
         }
     }
+    extra(scene, 0x0000ff, new THREE.Vector3(1, 1, 1));
+    extra(scene, 0xff00ff, new THREE.Vector3(1, 1, -1));
 
     return scene;
-};
+}
+
+function extra(scene, color, position) {
+    var geometry = new THREE.BoxGeometry(1, 1, 1);
+    var material = new THREE.MeshBasicMaterial({
+        color: color
+    });
+
+    var cube = new THREE.Mesh( geometry, material );
+    cube.position = position;
+    scene.add(cube);
+}
 
 function random(size) {
     var map = [];
