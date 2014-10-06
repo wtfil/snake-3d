@@ -24,11 +24,13 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 var v = 0.05;
+var z = R;
 var vx = 0;
 var vy = v;
 var side = 1;
 var vr = PI_2 / 10;
 var roll = 0;
+var pitch = PI / 3;
 
 window.addEventListener('keypress', debounce(onKeyPressed, 200, true));
 
@@ -60,8 +62,8 @@ function invertSide() {
     vx = -vx;
     vy = -vy;
     side = -side;
-    camera.position.z = -camera.position.z;
-    camera.rotation.x += PI;
+    pitch -= PI;
+    z = -z;
 }
 
 function updateRoll() {
@@ -92,32 +94,58 @@ function updateRoll() {
 
 function turnRight() {
     if (vy !== 0) {
-        vx = vy;
+        vx = vy * side;
         vy = 0;
     } else {
-        vy = -vx;
+        vy = -vx * side;
         vx = 0;
     }
 }
 
 function turnLeft() {
     if (vy !== 0) {
-        vx = -vy;
+        vx = -vy * side;
         vy = 0;
     } else {
-        vy = vx;
+        vy = vx * side;
         vx = 0;
     }
 }
 
 gameLoop.add(function () {
-
-    var droll = roll - camera.rotation.z;
     camera.position.x += vx;
     camera.position.y += vy;
+});
 
+gameLoop.add(function () {
+
+    var dz = z - camera.position.z;
+    if (Math.abs(dz) > 0.1) {
+        camera.position.z += dz > 0 ? vr : -vr;
+    } else {
+        camera.position.z = z;
+    }
+
+});
+
+gameLoop.add(function () {
+
+    var dpitch = pitch - camera.rotation.x;
+    if (Math.abs(dpitch) > 0.01) {
+        camera.rotation.x += dpitch > 0 ? vr : -vr;
+    } else {
+        camera.rotation.x = pitch;
+    }
+
+});
+
+gameLoop.add(function () {
+
+    var droll = roll - camera.rotation.z;
     if (Math.abs(droll) > 0.01) {
         camera.rotation.z += droll > 0 ? vr : -vr;
+    } else {
+        camera.rotation.z = roll;
     }
 
 });
