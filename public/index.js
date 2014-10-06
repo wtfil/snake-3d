@@ -7,6 +7,8 @@ var R = 2;
 var THREE = require('three');
 var debounce = require('debounce');
 var levels = require('./js/levels');
+var renderLoop = require('./js/core/render-loop');
+var gameLoop = require('./js/core/game-loop');
 require('./js/stats');
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -108,16 +110,18 @@ function turnLeft() {
     }
 }
 
-;(function renderTick() {
-    var droll = roll - camera.rotation.z;
+gameLoop.add(function () {
 
+    var droll = roll - camera.rotation.z;
     camera.position.x += vx;
     camera.position.y += vy;
+
     if (Math.abs(droll) > 0.01) {
         camera.rotation.z += droll > 0 ? vr : -vr;
     }
 
-    requestAnimationFrame(renderTick);
-    renderer.render(scene, camera);
+});
 
-}());
+renderLoop(function () {
+    renderer.render(scene, camera);
+});
