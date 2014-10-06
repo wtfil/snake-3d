@@ -11,7 +11,8 @@ function mapToGeometry(map) {
 
             geometry = new THREE.PlaneGeometry(1, 1);
             material = new THREE.MeshBasicMaterial({
-                color: map[i][j] ? 0xff0000 : 0x00ff00
+                color: map[i][j] ? 0xff0000 : 0x00ff00,
+                side: THREE.DoubleSide
             });
             plane = new THREE.Mesh( geometry, material );
             plane.position.x = j - my / 2;

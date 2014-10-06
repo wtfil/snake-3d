@@ -5,6 +5,7 @@ var PI_2 = Math.PI / 2;
 var R = 2;
 
 var THREE = require('three');
+var debounce = require('debounce');
 var levels = require('./js/levels');
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -22,16 +23,20 @@ document.body.appendChild(renderer.domElement);
 var v = 0.05;
 var vx = 0;
 var vy = v;
+var side = 1;
 var vr = PI_2 / 10;
 var roll = 0;
 
-window.addEventListener('keypress', function (e) {
+window.addEventListener('keypress', debounce(onKeyPressed, 200, true));
+
+function onKeyPressed(e) {
     var code = e.keyCode;
 
     // 119 87 1094 1062 w
     // 115 83 1099 1067 s
     // 97 65 1092 1064 a
     // 100 68 1074 1042 d
+    // 114 r
 
     if ([100, 68, 1074, 1042].indexOf(code) !== -1) {
         turnRight();
@@ -40,10 +45,21 @@ window.addEventListener('keypress', function (e) {
     if ([97, 65, 1064, 1092].indexOf(code) !== -1) {
         turnLeft();
     }
+    if ([114].indexOf(code) !== -1) {
+        invertSide();
+    }
 
     updateRoll();
 
-});
+}
+
+function invertSide() {
+    vx = -vx;
+    vy = -vy;
+    side = -side;
+    camera.position.z = -camera.position.z;
+    camera.rotation.x += PI;
+}
 
 function updateRoll() {
     var newRoll;
