@@ -2,7 +2,7 @@ var cos = Math.cos;
 var sin = Math.sin;
 var PI = Math.PI;
 var PI_2 = Math.PI / 2;
-var R = 2;
+var R = 1.5;
 
 var THREE = require('three');
 var debounce = require('debounce');
@@ -17,7 +17,7 @@ camera.rotation.order = 'ZXY';
 camera.rotation.x = PI / 3;
 window.camera = camera;
 
-var scene = levels.random(20);
+var scene = levels.get('simple');
 
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);

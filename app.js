@@ -1,11 +1,13 @@
 var app = require('koa')(),
     browserify = require('koa-browserify'),
+    brfs = require('brfs'),
     stat = require('koa-static'),
     fs = require('fs'),
     server;
 
 app.use(browserify({
     root: './public',
+    transform: brfs,
     debug: true
 }));
 
