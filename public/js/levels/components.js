@@ -1,5 +1,9 @@
 var THREE = require('three');
 
+function line(options) {
+
+}
+
 function plane(options) {
 
     var geometry = new THREE.PlaneGeometry(1, 1);
@@ -16,14 +20,17 @@ function plane(options) {
 
 function cube(options) {
 
-    var geometry = new THREE.BoxGeometry(1, 1, 1);
+    var geometry = new THREE.CubeGeometry(1, 1, 1);
     var material = new THREE.MeshBasicMaterial({
         color: options.color,
     });
-    
+
     var cube = new THREE.Mesh(geometry, material);
+
     cube.position = options.position;
     cube.position.z += 0.5;
+    window.cube = cube;
+    window.THREE = THREE;
 
     return cube;
 }

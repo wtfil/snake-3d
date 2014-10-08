@@ -9,7 +9,6 @@ var debounce = require('debounce');
 var levels = require('./js/levels');
 var renderLoop = require('./js/core/render-loop');
 var gameLoop = require('./js/core/game-loop');
-require('./js/stats');
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = R;
