@@ -1,8 +1,5 @@
 var THREE = require('three');
-
-function line(options) {
-
-}
+var height = Math.pow(2, -1/2);
 
 function plane(options) {
 
@@ -20,7 +17,7 @@ function plane(options) {
 
 function cube(options) {
 
-    var geometry = new THREE.CylinderGeometry(0, 0.4, 0.5, 4);
+    var geometry = new THREE.CylinderGeometry(0, height, height, 4);
     var material = new THREE.MeshLambertMaterial({
         color: options.color
     });
@@ -30,7 +27,8 @@ function cube(options) {
 
     item.position = options.position.clone();
     item.rotation.x = sing * Math.PI / 2;
-    item.position.z += sing * 0.26;
+    item.position.z += sing * (height / 2 + 0.1);
+    item.rotation.y = Math.PI / 4;
 
     return [item, plane({color: 0xFFFF99, position: options.position})];
 }
