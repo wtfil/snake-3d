@@ -9,7 +9,7 @@ function mapToGeometry(map) {
     var scene = new THREE.Scene();
     var mx = map[0].length;
     var my = map.length;
-    var item, i, j, point;
+    var items, i, j, point;
 
     for (i = 0; i < my; i ++) {
         for (j = 0; j < mx; j ++) {
@@ -18,33 +18,45 @@ function mapToGeometry(map) {
 
             if (point === 1) {
 
-                item = components.plane({
+                items = components.plane({
                     color: 0xFFFF99,
                     position: new THREE.Vector3(j, i, 0)
                 });
 
             } else if (point === 2) {
 
-                item = components.cube({
+                items = components.cube({
                     color: 0xCC66FF,
+                    up: true,
                     position: new THREE.Vector3(j, i, 0)
                 });
 
             } else if (point === 3) {
 
-                item = components.cube({
+                items = components.cube({
                     color: 0x00CCFF,
-                    position: new THREE.Vector3(j, i, -1)
+                    up: false,
+                    position: new THREE.Vector3(j, i, 0)
                 });
 
             } else {
                 throw new Error('point with value "' + point +'" does not supported');
             }
-            scene.add(item);
+
+            applyToScene(scene, items);
         }
     }
 
+    scene.add(new THREE.AmbientLight( 0x212223));
+    scene.add(components.light(new THREE.Vector3(0, 0, 1)));
+    scene.add(components.light(new THREE.Vector3(5, 5, -1)));
+
     return scene;
+}
+
+function applyToScene(scene, items) {
+	items = Array.isArray(items) ? items : [items];
+	items.forEach(scene.add.bind(scene));
 }
 
 function stringToMap(level) {

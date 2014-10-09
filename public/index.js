@@ -14,12 +14,22 @@ var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHei
 camera.position.z = R;
 camera.rotation.order = 'ZXY';
 camera.rotation.x = PI / 3;
-window.camera = camera;
 
 var scene = levels.get('simple');
 
-var renderer = new THREE.WebGLRenderer();
+var renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMapEnabled = true;
+renderer.shadowMapSoft = false;
+
+renderer.shadowCameraNear = 3;
+renderer.shadowCameraFar = camera.far;
+renderer.shadowCameraFov = 50;
+
+renderer.shadowMapBias = 0.0039;
+renderer.shadowMapDarkness = 0.5;
+renderer.shadowMapWidth = 1024;
+renderer.shadowMapHeight = 1024;
 document.body.appendChild(renderer.domElement);
 
 var v = 0.05;
