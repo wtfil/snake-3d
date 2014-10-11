@@ -1,8 +1,10 @@
+var width = window.innerWidth;
+var height = window.innerHeight;
 var cos = Math.cos;
 var sin = Math.sin;
 var PI = Math.PI;
 var PI_2 = Math.PI / 2;
-var R = 1.5;
+var R = 1.8;
 
 var THREE = require('three');
 var debounce = require('debounce');
@@ -10,7 +12,7 @@ var levels = require('./js/levels');
 var renderLoop = require('./js/core/render-loop');
 var gameLoop = require('./js/core/game-loop');
 
-var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
 camera.position.z = R;
 camera.rotation.order = 'ZXY';
 camera.rotation.x = PI / 3;
@@ -18,7 +20,7 @@ camera.rotation.x = PI / 3;
 var scene = levels.get('simple');
 
 var renderer = new THREE.WebGLRenderer({antialias: true});
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(width, height);
 renderer.shadowMapEnabled = true;
 renderer.shadowMapSoft = false;
 
@@ -51,6 +53,7 @@ function onKeyPressed(e) {
     // 97 65 1092 1064 a
     // 100 68 1074 1042 d
     // 114 r
+    // 112 p
 
     if ([100, 68, 1074, 1042].indexOf(code) !== -1) {
         turnRight();
@@ -59,8 +62,13 @@ function onKeyPressed(e) {
     if ([97, 65, 1064, 1092].indexOf(code) !== -1) {
         turnLeft();
     }
+
     if ([114].indexOf(code) !== -1) {
         invertSide();
+    }
+
+    if ([112].indexOf(code) !== -1) {
+        gameLoop.pause();
     }
 
     updateRoll();

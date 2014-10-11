@@ -3,13 +3,15 @@ var height = Math.pow(2, -1/2);
 
 function plane(options) {
 
-    var geometry = new THREE.PlaneGeometry(1, 1);
+    var geometry = new THREE.PlaneGeometry(0.8, 0.8);
     var material = new THREE.MeshBasicMaterial({
         side: THREE.DoubleSide,
         color: options.color
     });
     var item = new THREE.Mesh( geometry, material );
     item.position = options.position;
+    item.position.x += 0.1;
+    item.position.y += 0.1;
 
     return item;
 
