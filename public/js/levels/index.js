@@ -25,7 +25,7 @@ function mapToGeometry(map) {
 
             } else if (point === 2) {
 
-                items = components.cube({
+                items = components.pyramid({
                     color: 0xCC66FF,
                     up: true,
                     position: new THREE.Vector3(j, i, 0)
@@ -33,7 +33,7 @@ function mapToGeometry(map) {
 
             } else if (point === 3) {
 
-                items = components.cube({
+                items = components.pyramid({
                     color: 0x00CCFF,
                     up: false,
                     position: new THREE.Vector3(j, i, 0)

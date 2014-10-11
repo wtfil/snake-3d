@@ -1,23 +1,33 @@
 var width = window.innerWidth;
 var height = window.innerHeight;
+width = height;
 var cos = Math.cos;
 var sin = Math.sin;
 var PI = Math.PI;
 var PI_2 = Math.PI / 2;
-var R = 1.8;
+var R = 1.5;
 
 var THREE = require('three');
 var debounce = require('debounce');
 var levels = require('./js/levels');
 var renderLoop = require('./js/core/render-loop');
 var gameLoop = require('./js/core/game-loop');
+var Snake = require('./js/snake');
 
 var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
 camera.position.z = R;
 camera.rotation.order = 'ZXY';
-camera.rotation.x = PI / 3;
+camera.rotation.x = PI / 6 * 5;
 
 var scene = levels.get('simple');
+
+var snake = new Snake({
+    vx: 1,
+    vy: 1,
+    position: [5, 5],
+    length: 5
+});
+snake.appendToScene(scene);
 
 var renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setSize(width, height);
@@ -32,6 +42,8 @@ renderer.shadowMapBias = 0.0039;
 renderer.shadowMapDarkness = 0.5;
 renderer.shadowMapWidth = 1024;
 renderer.shadowMapHeight = 1024;
+renderer.domElement.width = width;
+renderer.domElement.height = height;
 document.body.appendChild(renderer.domElement);
 
 var v = 0.05;
@@ -148,7 +160,7 @@ gameLoop.add(function () {
 gameLoop.add(function () {
 
     var dpitch = pitch - camera.rotation.x;
-    if (Math.abs(dpitch) > 0.01) {
+    if (Math.abs(dpitch) > vr) {
         camera.rotation.x += dpitch > 0 ? vr : -vr;
     } else {
         camera.rotation.x = pitch;
@@ -159,7 +171,7 @@ gameLoop.add(function () {
 gameLoop.add(function () {
 
     var droll = roll - camera.rotation.z;
-    if (Math.abs(droll) > 0.01) {
+    if (Math.abs(droll) > vr) {
         camera.rotation.z += droll > 0 ? vr : -vr;
     } else {
         camera.rotation.z = roll;

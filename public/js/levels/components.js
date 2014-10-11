@@ -17,7 +17,7 @@ function plane(options) {
 
 }
 
-function cube(options) {
+function pyramid(options) {
 
     var geometry = new THREE.CylinderGeometry(0, height, height, 4);
     var material = new THREE.MeshLambertMaterial({
@@ -35,6 +35,18 @@ function cube(options) {
     return [item, plane({color: 0xFFFF99, position: options.position})];
 }
 
+function head(options) {
+    var geometry = new THREE.OctahedronGeometry(0.4, 0);
+    var material = new THREE.MeshLambertMaterial({
+        color: 0xff0000
+    });
+    var item = new THREE.Mesh(geometry, material);
+    item.position = options.position;
+    item.position.z += 0.4;
+
+    return item;
+}
+
 function light(position) {
     var item = new THREE.DirectionalLight(0xffffff, 1);
     item.position = position;
@@ -44,6 +56,7 @@ function light(position) {
 
 module.exports = {
     plane: plane,
-    cube: cube,
+    pyramid: pyramid,
+    head: head,
     light: light
 };
