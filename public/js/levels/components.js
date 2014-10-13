@@ -35,13 +35,82 @@ function pyramid(options) {
     return [item, plane({color: 0xFFFF99, position: options.position})];
 }
 
+// http://jsfiddle.net/VsWb9/2607/
 function head(options) {
-    var geometry = new THREE.OctahedronGeometry(0.4, 0);
+    var vertices = [
+        [0, 2, 1],
+        [0, 1, 2],
+        [0, 3, 2],
+        [0, 2, 3],
+        [1, 2, 0],
+        [1, 0, 2],
+        [1, 4, 2],
+        [1, 2, 4],
+        [4, 2, 4]
+    ];
+    var faces = [
+        [0, 1, 2, 3],
+        [1, 2, 3, 0],
+
+        [0, 1, 4, 5],
+        [1, 4, 5, 0],
+
+        [1, 3, 5, 7],
+        [3, 5, 7, 1],
+
+        [2, 3, 6, 7],
+        [3, 6, 7, 2],
+
+        [0, 2, 4, 6],
+        [2, 4, 6, 0],
+
+        [4, 5, 8],
+        [5, 8, 4],
+
+        [5, 7, 8],
+        [7, 8, 5],
+
+        [6, 7, 8],
+        [7, 8, 6],
+
+        [4, 6, 8],
+        [6, 8, 4]
+    ];
+    var geometry = new THREE.Geometry();
+    var l = d = h = 0.25;
+    vertices.forEach(function (item) {
+        geometry.vertices.push(new THREE.Vector3(item[0] * l, item[1] * d, item[2] * h));
+    });
+    faces.forEach(function (item) {
+        if (item.length === 4) {
+            geometry.faces.push(new THREE.Face4(item[0], item[1], item[2], item[4]));
+        } else {
+            geometry.faces.push(new THREE.Face3(item[0], item[1], item[2]));
+        }
+
+    });
+    geometry.mergeVertices();
+
+    var material = new THREE.MeshNormalMaterial({
+        color: 0xff0000,
+        side: THREE.DoubleSide
+    });
+    //var meterial = new THREE.MeshBasicMaterial({ vertexColors : THREE.VertexColors })
+    geometry.faces[0].color.setHex(0xff0000);
+    var item = new THREE.Mesh(geometry, material);
+    item.position = options.position.clone();
+    item.position.z += 0.4;
+
+    return item;
+}
+
+function segment(options) {
+    var geometry = new THREE.BoxGeometry(1, 0.3, 0.3);
     var material = new THREE.MeshLambertMaterial({
         color: 0xff0000
     });
     var item = new THREE.Mesh(geometry, material);
-    item.position = options.position;
+    item.position = options.position.clone();
     item.position.z += 0.4;
 
     return item;
@@ -58,5 +127,6 @@ module.exports = {
     plane: plane,
     pyramid: pyramid,
     head: head,
+    segment: segment,
     light: light
 };
