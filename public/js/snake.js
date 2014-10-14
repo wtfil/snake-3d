@@ -18,26 +18,24 @@ Snake.prototype = Object.create(Array.prototype);
 Snake.prototype._fill = function(options) {
     var headPosition = new THREE.Vector3(options.position[0], options.position[1], 0);
     var position = headPosition;
-    var i = 1;
+    var i = 0;
+    var singX = Math.abs(this._vx) / this._vx;
+    var singY = Math.abs(this._vy) / this._vy;
 
-    this.push(components.head({position: position}));
-
-    for (; i < this.length - 1; i ++) {
+    for (; i < this.length; i ++) {
         position = position.clone();
-        position.x -= this._vx;
-        position.y -= this._vy;
         this[i] = components.segment({position: position, color: 0xffffff});
+        position.x -= singX;
+        position.y -= singY;
     }
-    console.log('items')
-    console.log(this)
 };
 
 Snake.prototype.appendToScene = function(scene) {
-    console.log(this, this[0])
     this.forEach(function (item) {
-        console.log(item);
         scene.add(item);
     });
 };
 
-module.exports = Snake;
+module.exports = function (options) {
+    return new Snake(options);
+};

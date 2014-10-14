@@ -1,33 +1,29 @@
 var width = window.innerWidth;
 var height = window.innerHeight;
 width = height;
-var cos = Math.cos;
-var sin = Math.sin;
-var PI = Math.PI;
-var PI_2 = Math.PI / 2;
-var R = 3.5;
 
 var THREE = require('three');
 var debounce = require('debounce');
 var levels = require('./js/levels');
 var renderLoop = require('./js/core/render-loop');
-var gameLoop = require('./js/core/game-loop');
+
+var V = 0.005;
 
 var camera = require('./js/camera')({
-    width: width,
-    height: height
+    ratio: width / height,
+    vx: V,
+    vy: 0,
+    position: [5, 5]
 });
 
-var Snake = require('./js/snake');
-var scene = levels.get('simple');
-
-var snake = new Snake({
-    vx: 1,
+var snake = require('./js/snake')({
+    vx: V,
     vy: 0,
     position: [5, 5],
     length: 5
-});
+})
 
+var scene = levels.get('simple');
 snake.appendToScene(scene);
 
 var renderer = new THREE.WebGLRenderer({antialias: true});
@@ -46,15 +42,6 @@ renderer.shadowMapHeight = 1024;
 renderer.domElement.width = width;
 renderer.domElement.height = height;
 document.body.appendChild(renderer.domElement);
-
-var v = 0.05;
-var z = R;
-var vx = 0;
-var vy = v;
-var side = 1;
-var vr = PI_2 / 10;
-var roll = 0;
-var pitch = PI / 3;
 
 window.addEventListener('keypress', debounce(onKeyPressed, 200, true));
 

@@ -13,21 +13,26 @@ var V_Z = DEFAULT_Z / 10;
 var V = 0.05;
 V /= 10;
 
-function Camera() {
-    THREE.PerspectiveCamera.apply(this, arguments);
+function Camera(options) {
+    THREE.PerspectiveCamera.call(this, 75, options.ratio, 0.1, 13);
 
-    this.position.z = DEFAULT_Z;
     this.rotation.order = 'ZXY';
     this.rotation.x = PITCH;
-    this.position.x = 3;
-    this.position.y = 5;
+
+    this.position.x = options.position[0];
+    this.position.y = options.position[1];
+    this.position.z = DEFAULT_Z;
 
     this._side = 1 // or -1
-    this._vx = 0;
-    this._vy = V;
+    this._vx = options.vx;
+    this._vy = options.vy;
     this._z = this.position.z;
-    this._roll = this.rotation.z;
     this._pitch = this.rotation.x;
+
+    this._roll = 0;
+    this.fixRoll();
+    this.rotation.z = this._roll;
+
     gameLoop.add(this._onGameLoop.bind(this));
 }
 Camera.prototype = Object.create(THREE.PerspectiveCamera.prototype);
@@ -110,7 +115,6 @@ function reachingAim (current, aim, step) {
 }
 
 module.exports = function (options) {
-    var camera = new Camera(75, options.width / options.height, 0.1, 13);
-
+    var camera = new Camera(options);
     return camera;
 }
