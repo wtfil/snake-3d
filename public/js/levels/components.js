@@ -36,14 +36,17 @@ function pyramid(options) {
 }
 
 function segment(options) {
-    var geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+    var geometry = new THREE.CylinderGeometry(0.3, 0.3, 0.5, 5);
     var material = new THREE.MeshLambertMaterial({
         color: 0xff0000
     });
     var item = new THREE.Mesh(geometry, material);
     item.position = options.position.clone();
-    item.position.z += 0.4;
-    item.rotation.x = Math.PI / 4;
+    item.position.z += 0.3;
+    item.position.y += 0.1;
+    //item.position.y += 0.3;
+    item.rotation.z = Math.PI / 2;
+    //item.rotation.x = Math.PI / 4;
 
     return item;
 }

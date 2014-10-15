@@ -1,19 +1,19 @@
 var width = window.innerWidth;
 var height = window.innerHeight;
-width = height;
+//width = height;
 
 var THREE = require('three');
 var debounce = require('debounce');
 var levels = require('./js/levels');
 var renderLoop = require('./js/core/render-loop');
 
-var V = 0.005;
+var V = 0.02;
 
 var camera = require('./js/camera')({
     ratio: width / height,
     vx: V,
     vy: 0,
-    position: [5, 5]
+    position: [2, 5]
 });
 
 var snake = require('./js/snake')({
@@ -57,10 +57,12 @@ function onKeyPressed(e) {
 
     if ([100, 68, 1074, 1042].indexOf(code) !== -1) {
         camera.turnRight();
+        snake.turnRight();
     }
 
     if ([97, 65, 1064, 1092].indexOf(code) !== -1) {
         camera.turnLeft();
+        snake.turnLeft();
     }
 
     if ([114].indexOf(code) !== -1) {
@@ -72,7 +74,6 @@ function onKeyPressed(e) {
     }
 
 }
-
 
 renderLoop(function () {
     renderer.render(scene, camera);

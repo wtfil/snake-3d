@@ -10,8 +10,6 @@ var PITCH  = PI / 4;
 var V_ROLL = PI / 20;
 var V_PITCH = PI / 10;
 var V_Z = DEFAULT_Z / 10;
-var V = 0.05;
-V /= 10;
 
 function Camera(options) {
     THREE.PerspectiveCamera.call(this, 75, options.ratio, 0.1, 13);
