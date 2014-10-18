@@ -5,14 +5,19 @@
   "engines": {
     "node": ">=0.11.0"
   },
+  "scripts": {
+    "start": "gulp dev"
+  },
   "dependencies": {
     "brfs": "^1.2.0",
+    "browserify": "^6.1.0",
     "debounce": "^1.0.0",
-    "gnode": "^0.1.0",
-    "koa": "^0.12.2",
-    "koa-browserify": "0.0.4",
-    "koa-static": "^1.4.7",
+    "gulp": "^3.8.8",
+    "gulp-util": "^3.0.1",
+    "http-server": "^0.7.2",
     "stats-js": "^1.0.0-alpha1",
-    "three": "^0.66.4"
+    "three": "^0.66.4",
+    "vinyl-source-stream": "^1.0.0",
+    "watchify": "^2.0.0"
   }
 }

@@ -72,7 +72,6 @@ function onKeyPressed(e) {
     if ([112].indexOf(code) !== -1) {
         gameLoop.pause();
     }
-
 }
 
 renderLoop(function () {
