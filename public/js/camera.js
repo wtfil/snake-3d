@@ -1,5 +1,6 @@
 var THREE = require('three');
 var gameLoop = require('./core/game-loop');
+
 var cos = Math.cos;
 var sin = Math.sin;
 var PI = Math.PI;
@@ -28,7 +29,7 @@ function Camera(options) {
     this._pitch = this.rotation.x;
 
     this._roll = 0;
-    this.fixRoll();
+    this._fixRoll();
     this.rotation.z = this._roll;
 
     gameLoop.add(this._onGameLoop.bind(this));
@@ -36,33 +37,38 @@ function Camera(options) {
 Camera.prototype = Object.create(THREE.PerspectiveCamera.prototype);
 
 Camera.prototype._onGameLoop = function () {
-    this.position.x += this._vx;
-    this.position.y += this._vy;
+
     this.rotation.x = reachingAim(this.rotation.x, this._pitch, V_PITCH);
     this.rotation.z = reachingAim(this.rotation.z, this._roll, V_ROLL);
     this.position.z = reachingAim(this.position.z, this._z, V_Z);
+
 }
 
-Camera.prototype.turnLeft = function () {
-    if (this._vy !== 0) {
-        this._vx = -this._vy * this._side;
-        this._vy = 0;
+function getRoll(vx, vy) {
+    var mewRoll;
+    if (vy > 0) {
+        newRoll = 0;
+    } else if (vy < 0) {
+        newRoll = PI;
+    } else if (vx > 0) {
+        newRoll = -PI_2;
     } else {
-        this._vy = this._vx * this._side;
-        this._vx = 0;
+        newRoll = PI_2;
     }
-    this.fixRoll();
+    return newRoll;
 }
 
-Camera.prototype.turnRight = function () {
-    if (this._vy !== 0) {
-        this._vx = this._vy * this._side;
-        this._vy = 0;
-    } else {
-        this._vy = -this._vx * this._side;
-        this._vx = 0;
-    }
-    this.fixRoll();
+Camera.prototype.follow = function (object, distance) {
+    var _this = this;
+
+    gameLoop.add(function () {
+        var a = getRoll(object.vx, object.vy) - PI_2;
+        _this.position.x = object.position.x + distance * cos(a);
+        _this.position.y = object.position.y + distance * sin(a);
+        _this._vx = object.vx;
+        _this._vy = object.vy;
+        _this._fixRoll();
+    })
 }
 
 Camera.prototype.invertSide = function () {
@@ -74,7 +80,7 @@ Camera.prototype.invertSide = function () {
     this.fixRoll();
 }
 
-Camera.prototype.fixRoll = function () {
+Camera.prototype._fixRoll = function () {
     var newRoll;
 
     if (this._vy > 0) {

@@ -23,6 +23,8 @@ var snake = require('./js/snake')({
     length: 5
 })
 
+camera.follow(snake[0], 3);
+
 var scene = levels.get('simple');
 snake.appendToScene(scene);
 
@@ -56,12 +58,10 @@ function onKeyPressed(e) {
     // 112 p
 
     if ([100, 68, 1074, 1042].indexOf(code) !== -1) {
-        camera.turnRight();
         snake.turnRight();
     }
 
     if ([97, 65, 1064, 1092].indexOf(code) !== -1) {
-        camera.turnLeft();
         snake.turnLeft();
     }
 
