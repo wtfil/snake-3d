@@ -7,7 +7,7 @@ var debounce = require('debounce');
 var levels = require('./js/levels');
 var renderLoop = require('./js/core/render-loop');
 
-var V = 0.02;
+var V = 0.05;
 
 var camera = require('./js/camera')({
     ratio: width / height,

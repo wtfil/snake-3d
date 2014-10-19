@@ -28,8 +28,6 @@ function Camera(options) {
     this._z = this.position.z;
     this._pitch = this.rotation.x;
 
-    this._roll = 0;
-    this._fixRoll();
     this.rotation.z = this._roll;
 
     gameLoop.add(this._onGameLoop.bind(this));
@@ -39,35 +37,58 @@ Camera.prototype = Object.create(THREE.PerspectiveCamera.prototype);
 Camera.prototype._onGameLoop = function () {
 
     this.rotation.x = reachingAim(this.rotation.x, this._pitch, V_PITCH);
-    this.rotation.z = reachingAim(this.rotation.z, this._roll, V_ROLL);
     this.position.z = reachingAim(this.position.z, this._z, V_Z);
 
 }
 
-function getRoll(vx, vy) {
-    var mewRoll;
+function getRoll(vx, vy, current) {
+    var roll;
     if (vy > 0) {
-        newRoll = 0;
+        roll = -PI_2;
     } else if (vy < 0) {
-        newRoll = PI;
+        roll = PI_2;
     } else if (vx > 0) {
-        newRoll = -PI_2;
+        roll = PI;
     } else {
-        newRoll = PI_2;
+        roll = 0;
     }
-    return newRoll;
+
+    while (roll > current + PI) {
+        roll -= 2 * PI;
+    }
+    while (roll < current - PI) {
+        roll += 2 * PI;
+    }
+
+    return roll;
+}
+
+function getSign(val) {
+    return val && (val > 0 ? 1 : -1);
 }
 
 Camera.prototype.follow = function (object, distance) {
+
     var _this = this;
+    var angle = getRoll(object.vx, object.vy, 0);
+    var step = 0.05;
+
+    this.position.x = object.position.x + distance * cos(angle);
+    this.position.y = object.position.y + distance * sin(angle);
 
     gameLoop.add(function () {
-        var a = getRoll(object.vx, object.vy) - PI_2;
-        _this.position.x = object.position.x + distance * cos(a);
-        _this.position.y = object.position.y + distance * sin(a);
-        _this._vx = object.vx;
-        _this._vy = object.vy;
-        _this._fixRoll();
+        var current = getRoll(object.vx, object.vy, angle);
+        var diff = current - angle;
+
+        if (Math.abs(diff) > step / 2) {
+            angle += step * getSign(diff);
+        } else {
+            angle = current;
+        }
+
+        _this.position.x = object.position.x + distance * cos(angle);
+        _this.position.y = object.position.y + distance * sin(angle);
+        _this.rotation.z = angle + PI_2;
     })
 }
 
@@ -77,36 +98,7 @@ Camera.prototype.invertSide = function () {
     this._side = -this._side;
     this._pitch -= PI;
     this._z = -this._z;
-    this.fixRoll();
 }
-
-Camera.prototype._fixRoll = function () {
-    var newRoll;
-
-    if (this._vy > 0) {
-        newRoll = 0;
-    } else if (this._vy < 0) {
-        newRoll = PI;
-    } else if (this._vx > 0) {
-        newRoll = -PI_2;
-    } else {
-        newRoll = PI_2;
-    }
-
-    if (this._side < 0) {
-        newRoll += PI;
-    }
-
-    while (newRoll > this._roll + PI_2) {
-        newRoll -= 2 * PI;
-    }
-    while (newRoll < this._roll - PI_2) {
-        newRoll += 2 * PI;
-    }
-
-    this._roll = newRoll;
-}
-
 
 function reachingAim (current, aim, step) {
     var diff = aim - current;

@@ -83,10 +83,10 @@ Snake.prototype.turnLeft = function () {
 Snake.prototype.turnRight = function () {
 
     if (this._vy !== 0) {
-        this._vx = -this._vy * this._side;
+        this._vx = this._vy * this._side;
         this._vy = 0;
     } else {
-        this._vy = this._vx * this._side;
+        this._vy = -this._vx * this._side;
         this._vx = 0;
     }
 
