@@ -2,11 +2,18 @@ var THREE = require('three');
 var resolve = require('./resolve');
 var components = require('./components');
 
+function Level(map) {
+    THREE.Scene.call(this);
+    this.walls = [];
+    this.drawMap(map);
+}
+
+Level.prototype = Object.create(THREE.Scene.prototype);
+
 // 1 - plane
 // 2 - cube
 // 3 - -cube
-function mapToGeometry(map) {
-    var scene = new THREE.Scene();
+Level.prototype.drawMap = function (map) {
     var mx = map[0].length;
     var my = map.length;
     var items, i, j, point;
@@ -30,6 +37,7 @@ function mapToGeometry(map) {
                     up: true,
                     position: new THREE.Vector3(j, i, 0)
                 });
+                this.walls.push(items[0]);
 
             } else if (point === 3) {
 
@@ -43,15 +51,15 @@ function mapToGeometry(map) {
                 throw new Error('point with value "' + point +'" does not supported');
             }
 
-            applyToScene(scene, items);
+            applyToScene(this, items);
         }
     }
 
-    scene.add(new THREE.AmbientLight( 0x212223));
-    scene.add(components.light(new THREE.Vector3(0, 0, 1)));
-    scene.add(components.light(new THREE.Vector3(5, 5, -1)));
+    this.add(new THREE.AmbientLight( 0x212223));
+    this.add(components.light(new THREE.Vector3(0, 0, 1)));
+    this.add(components.light(new THREE.Vector3(5, 5, -1)));
 
-    return scene;
+    return this;
 }
 
 function applyToScene(scene, items) {
@@ -65,25 +73,12 @@ function stringToMap(level) {
     });
 }
 
-function random(size) {
-    var map = [];
-    var i, j;
-    for (i = 0; i < size; i ++) {
-        map[i] = [];
-        for (j = 0; j < size; j ++) {
-            map[i][j] = Math.random() > 0.5 ? 1 : 0;
-        }
-    }
-    return mapToGeometry(map);
-}
-
 function getLevel(name) {
     var level = resolve(name);
     var map = level instanceof Object ? level : stringToMap(level);
-    return mapToGeometry(map);
+    return new Level(map);
 }
 
 module.exports = {
-    random: random,
     get: getLevel
 };

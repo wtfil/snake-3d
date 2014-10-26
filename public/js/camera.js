@@ -6,8 +6,8 @@ var sin = Math.sin;
 var PI = Math.PI;
 var PI_2 = Math.PI / 2;
 
-var DEFAULT_Z = 2.5;
-var PITCH  = PI / 4;
+var DEFAULT_Z = 3.5;
+var PITCH  = PI / 5;
 var V_ROLL = PI / 20;
 var V_PITCH = PI / 10;
 var V_Z = DEFAULT_Z / 10;
@@ -18,28 +18,21 @@ function Camera(options) {
     this.rotation.order = 'ZXY';
     this.rotation.x = PITCH;
 
-    this.position.x = options.position[0];
-    this.position.y = options.position[1];
     this.position.z = DEFAULT_Z;
 
     this._side = 1 // or -1
-    this._vx = options.vx;
-    this._vy = options.vy;
     this._z = this.position.z;
     this._pitch = this.rotation.x;
 
-    this.rotation.z = this._roll;
-
     gameLoop.add(this._onGameLoop.bind(this));
 }
+
 Camera.prototype = Object.create(THREE.PerspectiveCamera.prototype);
 
 Camera.prototype._onGameLoop = function () {
-
     this.rotation.x = reachingAim(this.rotation.x, this._pitch, V_PITCH);
     this.position.z = reachingAim(this.position.z, this._z, V_Z);
-
-}
+};
 
 function getRoll(vx, vy, current) {
     var roll;
@@ -90,7 +83,7 @@ Camera.prototype.follow = function (object, distance) {
         _this.position.y = object.position.y + distance * sin(angle);
         _this.rotation.z = angle + PI_2;
     })
-}
+};
 
 Camera.prototype.invertSide = function () {
     this._vx = -this._vx;
@@ -113,4 +106,4 @@ function reachingAim (current, aim, step) {
 module.exports = function (options) {
     var camera = new Camera(options);
     return camera;
-}
+};

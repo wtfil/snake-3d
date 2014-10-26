@@ -6,19 +6,19 @@ var THREE = require('three');
 var debounce = require('debounce');
 var levels = require('./js/levels');
 var renderLoop = require('./js/core/render-loop');
+var gameLoop = require('./js/core/game-loop');
 
-var V = 0.05;
+var collisions = require('./js/collisions');
 
 var camera = require('./js/camera')({
-    ratio: width / height,
-    vx: V,
-    vy: 0,
-    position: [2, 5]
+    ratio: width / height
 });
 
 var snake = require('./js/snake')({
-    vx: V,
-    vy: 0,
+    direction: {
+        x: 1,
+        y: 0
+    },
     position: [5, 5],
     length: 5
 })
@@ -27,6 +27,24 @@ camera.follow(snake[0], 3);
 
 var scene = levels.get('simple');
 snake.appendToScene(scene);
+
+// TODO move this somewhere
+gameLoop.add(function () {
+    var c = collisions([snake[0]], scene.walls);
+
+    if (!c.length) {
+        return;
+    }
+
+    c = c[0];
+    if (c.name === 'walls') {
+        gameLoop.pause();
+    } else {
+        snake.extend();
+    }
+
+});
+
 
 var renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setSize(width, height);
@@ -74,6 +92,8 @@ function onKeyPressed(e) {
     }
 }
 
-renderLoop(function () {
-    renderer.render(scene, camera);
+setTimeout(function () {
+    renderLoop(function () {
+        renderer.render(scene, camera);
+    });
 });

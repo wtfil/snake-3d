@@ -2,6 +2,8 @@ var THREE = require('three');
 var components = require('./levels/components');
 var gameLoop = require('./core/game-loop');
 
+var V = 0.05;
+
 function getSign(val) {
     return val && (val > 0 ? 1 : -1);
 }
@@ -25,19 +27,24 @@ function Snake(options) {
     Array.call(this);
 
     this.length = options.length;
-    this._vx = options.vx;
-    this._vy = options.vy;
-    this._v = Math.abs(this._vx) + Math.abs(this._vy);
-    this._stepsToRotate = ~~(1 / this._v);
+
+    this._vx = options.direction.x * V;
+    this._vy = options.direction.y * V;
     this._side = 1;
     this._fill(options);
+    this._updateCounters();
     gameLoop.add(this._onGameLoop.bind(this));
 }
 
 Snake.prototype = Object.create(Array.prototype);
 
+Snake.prototype._updateCounters = function () {
+    this._stepsToRotate = ~~(1 / V);
+};
+
 Snake.prototype._onGameLoop = function () {
     var i = this.length - 1;
+    var prevAngle, angle;
     var curr, prev;
 
     for (i = 0; i < this.length; i ++) {
@@ -50,12 +57,11 @@ Snake.prototype._onGameLoop = function () {
 
     if (!this._stepsToRotate) {
 
-        this._stepsToRotate = ~~(1 / this._v);
+        this._updateCounters();
 
         for (i = this.length - 1; i > 0; i --) {
             this[i].vx = this[i - 1].vx;
             this[i].vy = this[i - 1].vy;
-
             this[i].rotation.z = getRotateAngle(this[i].vx, this[i].vy);
         }
 
@@ -111,7 +117,28 @@ Snake.prototype.turnRight = function () {
 
 };
 
+Snake.extend = function () {
+    var last = this.slice().pop();
+    var segment = last.clone();
+    segment.vx = last.vx;
+    segment.vy = last.vy;
+    if (segment.vx > 0) {
+        segment.position.x --;
+    } else if (segment.vx < 0) {
+        segment.position.x ++;
+    } else if (segment.vy > 0) {
+        segment.position.y --;
+    } else {
+        segment.position.y ++;
+    }
+    console.log(this.length);
+    this.push(segment);
+    console.log(this.length);
+    this.scene.add(segment);
+};
+
 Snake.prototype.appendToScene = function(scene) {
+    this.scene = scene;
     this.forEach(function (item) {
         scene.add(item);
     });

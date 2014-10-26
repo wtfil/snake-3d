@@ -17,7 +17,19 @@ function pause() {
     isPause = !isPause;
 }
 
+function add(fn) {
+    tasks.push(fn);
+}
+
+function remove (fn) {
+    var index = tasks.indexOf(fn);
+    if (index !== -1) {
+        tasks.splice(index, 1);
+    }
+}
+
 module.exports = {
-    add: tasks.push.bind(tasks),
+    add: add,
+    remove: remove,
     pause: pause
 };
