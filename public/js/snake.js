@@ -75,7 +75,7 @@ Snake.prototype._onGameLoop = function () {
 
 
 Snake.prototype._fill = function(options) {
-    var headPosition = new THREE.Vector3(options.position[0], options.position[1], 0);
+    var headPosition = new THREE.Vector3(options.position.x, options.position.y, 0);
     var position = headPosition;
     var singX = getSign(this._vx);
     var singY = getSign(this._vy);
@@ -117,11 +117,13 @@ Snake.prototype.turnRight = function () {
 
 };
 
-Snake.extend = function () {
+Snake.prototype.extend = function () {
     var last = this.slice().pop();
     var segment = last.clone();
+
     segment.vx = last.vx;
     segment.vy = last.vy;
+
     if (segment.vx > 0) {
         segment.position.x --;
     } else if (segment.vx < 0) {
@@ -131,9 +133,8 @@ Snake.extend = function () {
     } else {
         segment.position.y ++;
     }
-    console.log(this.length);
+
     this.push(segment);
-    console.log(this.length);
     this.scene.add(segment);
 };
 

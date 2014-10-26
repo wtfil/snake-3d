@@ -3,15 +3,15 @@ var height = Math.pow(2, -1/2);
 
 function plane(options) {
 
-    var geometry = new THREE.PlaneGeometry(0.8, 0.8);
+    var geometry = new THREE.PlaneGeometry(0.9, 0.9);
     var material = new THREE.MeshBasicMaterial({
         side: THREE.DoubleSide,
-        color: options.color
+        color: 0x66FFFF
     });
     var item = new THREE.Mesh( geometry, material );
     item.position = options.position;
-    item.position.x += 0.1;
-    item.position.y += 0.1;
+    item.position.x += 0.05;
+    item.position.y += 0.05;
 
     return item;
 
@@ -32,7 +32,7 @@ function pyramid(options) {
     item.position.z += sing * (height / 2 + 0.1);
     item.rotation.y = Math.PI / 4;
 
-    return [item, plane({color: 0xFFFF99, position: options.position})];
+    return [item, plane({color: 0x66FFFF, position: options.position})];
 }
 
 function segment(options) {
@@ -43,7 +43,22 @@ function segment(options) {
     var item = new THREE.Mesh(geometry, material);
     item.position = options.position.clone();
     item.position.z += 0.3;
-    item.position.y += 0.1;
+    item.position.x += 0.05;
+    item.position.y += 0.05;
+
+    return item;
+}
+
+function coin(options) {
+    var geometry = new THREE.CylinderGeometry(0.35, 0.35, 0.1, 20);
+    var material = new THREE.MeshLambertMaterial({
+        color: 0xE6B800
+    });
+    var item = new THREE.Mesh(geometry, material);
+
+    item.position = options.position;
+    item.position.z += 0.5;
+    item.rotation.z = Math.PI / 5;
 
     return item;
 }
@@ -57,6 +72,7 @@ function light(position) {
 
 module.exports = {
     plane: plane,
+    coin: coin,
     pyramid: pyramid,
     segment: segment,
     light: light

@@ -1,32 +1,29 @@
-var slice = [].slice;
-var items = [];
-
-function checkGroups (a, b, name) {
-    var collisions = [];
-    var i, j;
+function checkGroups (a, b) {
+    var i, j, pa, pb;
 
     for (i = 0; i < a.length; i ++) {
         for (j = 0; j < b.length; j ++) {
+            pa = a[i].position || a[i];
+            pb = b[j].position || b[j];
 
             if (
-                (a[i].position.x > b[j].position.x) &&
-                (a[i].position.x < b[j].position.x + 1) &&
-                (a[i].position.y > b[j].position.y) &&
-                (a[i].position.y < b[j].position.y + 1)
+                (pa.x > pb.x - 1) &&
+                (pa.x < pb.x + 1) &&
+                (pa.y > pb.y - 1) &&
+                (pa.y < pb.y + 1) &&
+                (Math.abs(pa.x - pb.x) < 1) &&
+                (Math.abs(pa.y - pb.y) < 1)
             ) {
-                collisions.push({
-                    name: name,
-                    position: {
-                        x: a[i].position.x,
-                        y: a[i].position.y
-                    }
-                });
+                return {
+                    x: pa.x,
+                    y: pa.y
+                };
             }
 
         }
     }
 
-    return collisions;
+    return null;
 }
 
 function check(snake, walls, items) {
@@ -35,6 +32,4 @@ function check(snake, walls, items) {
 }
 
 
-module.exports = function (snake, walls) {
-    return check(snake, walls, items);
-}
+module.exports = checkGroups;

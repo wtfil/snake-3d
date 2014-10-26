@@ -19,7 +19,10 @@ var snake = require('./js/snake')({
         x: 1,
         y: 0
     },
-    position: [5, 5],
+    position: {
+        x: 5,
+        y: 5
+    },
     length: 5
 })
 
@@ -30,16 +33,12 @@ snake.appendToScene(scene);
 
 // TODO move this somewhere
 gameLoop.add(function () {
-    var c = collisions([snake[0]], scene.walls);
+    var head = [snake[0]];
 
-    if (!c.length) {
-        return;
-    }
-
-    c = c[0];
-    if (c.name === 'walls') {
+    if (collisions(head, scene.walls)) {
         gameLoop.pause();
-    } else {
+    } else if (collisions(head, scene.coins)) {
+        scene.replaceCoin();
         snake.extend();
     }
 

@@ -1,21 +1,50 @@
 var THREE = require('three');
 var resolve = require('./resolve');
 var components = require('./components');
+var collisions = require('../collisions');
 
 function Level(map) {
     THREE.Scene.call(this);
     this.walls = [];
+    this.coins = [];
+    this.size = {
+        x: map[0].length,
+        y: map.length
+    };
     this.drawMap(map);
+    this.randomCoin();
 }
 
 Level.prototype = Object.create(THREE.Scene.prototype);
+
+Level.prototype.randomCoin = function () {
+    var x, y, coin;
+
+    do {
+        x = Math.floor(Math.random() * this.size.x);
+        y = Math.floor(Math.random() * this.size.y);
+    } while (collisions([{x: x, y: y}], this.walls));
+
+    coin = components.coin({
+        position: new THREE.Vector3(x, y, 0)
+    });
+    this.coins = [coin];
+
+    this.add(coin);
+
+};
+
+Level.prototype.replaceCoin = function () {
+    this.remove(this.coins[0]);
+    this.randomCoin();
+};
 
 // 1 - plane
 // 2 - cube
 // 3 - -cube
 Level.prototype.drawMap = function (map) {
-    var mx = map[0].length;
-    var my = map.length;
+    var mx = this.size.x;
+    var my = this.size.y;
     var items, i, j, point;
 
     for (i = 0; i < my; i ++) {
@@ -26,7 +55,6 @@ Level.prototype.drawMap = function (map) {
             if (point === 1) {
 
                 items = components.plane({
-                    color: 0xFFFF99,
                     position: new THREE.Vector3(j, i, 0)
                 });
 

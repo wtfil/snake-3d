@@ -20,7 +20,9 @@ gulp.task('server', function (cb) {
 });
 
 gulp.task('watch', function () {
-    var bundler = watchify(browserify(files.src, watchify.args));
+    var args = watchify.args;
+    args.degub = true;
+    var bundler = watchify(browserify(files.src, args));
 
     bundler.transform('brfs');
     bundler.on('update', rebundle);
