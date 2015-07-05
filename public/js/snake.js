@@ -24,10 +24,8 @@ function Snake(options) {
     if (options.length < 2) {
         throw new Error('Snake could not be less then 2 bars lenght');
     }
-    Array.call(this);
 
-    this.length = options.length;
-
+    this.segments = [];
     this._vx = options.direction.x * V;
     this._vy = options.direction.y * V;
     this._side = 1;
@@ -38,7 +36,19 @@ function Snake(options) {
 
 Snake.prototype = Object.create(Array.prototype);
 
+Snake.prototype.getHead = function () {
+    return this.segments[0];
+};
+
 Snake.prototype._updateCounters = function () {
+    // TODO  next rotate does works properly, needs to be fixed
+    if (this.nextRotate === 'left') {
+        this.turnLeft();
+    } else if (this.nextRotate === 'right') {
+        this.turnRight();
+    }
+    this.nextRotate = null;
+    this.currentRoute = null;
     this._stepsToRotate = ~~(1 / V);
 };
 
@@ -47,8 +57,8 @@ Snake.prototype._onGameLoop = function () {
     var prevAngle, angle;
     var curr, prev;
 
-    for (i = 0; i < this.length; i ++) {
-        curr = this[i];
+    for (i = 0; i < this.segments.length; i ++) {
+        curr = this.segments[i];
         curr.position.x += curr.vx;
         curr.position.y += curr.vy;
     }
@@ -59,15 +69,18 @@ Snake.prototype._onGameLoop = function () {
 
         this._updateCounters();
 
-        for (i = this.length - 1; i > 0; i --) {
-            this[i].vx = this[i - 1].vx;
-            this[i].vy = this[i - 1].vy;
-            this[i].rotation.z = getRotateAngle(this[i].vx, this[i].vy);
+        for (i = this.segments.length - 1; i > 0; i --) {
+            curr = this.segments[i];
+            prev = this.segments[i - 1];
+            curr.vx = prev.vx;
+            curr.vy = prev.vy;
+            curr.rotation.z = getRotateAngle(curr.vx, curr.vy);
         }
+        curr = this.segments[0];
 
-        this[0].vx = this._vx;
-        this[0].vy = this._vy;
-        this[0].rotation.z = getRotateAngle(this[0].vx, this[0].vy);
+        curr.vx = this._vx;
+        curr.vy = this._vy;
+        curr.rotation.z = getRotateAngle(curr.vx, curr.vy);
 
     }
 
@@ -81,13 +94,17 @@ Snake.prototype._fill = function(options) {
     var singY = getSign(this._vy);
     var rotateAngle = getRotateAngle(this._vx, this._vy);
     var i = 0;
+    var segment;
 
-    for (; i < this.length; i ++) {
+    for (; i < options.length; i ++) {
         position = position.clone();
-        this[i] = components.segment({position: position, color: 0xffffff});
-        this[i].vx = this._vx;
-        this[i].vy = this._vy;
-        this[i].rotation.z = rotateAngle;
+
+        segment = components.segment({position: position, color: 0xffffff});
+        segment.vx = this._vx;
+        segment.vy = this._vy;
+        segment.rotation.z = rotateAngle;
+        this.segments.push(segment);
+
         position.x -= singX;
         position.y -= singY;
     }
@@ -95,6 +112,11 @@ Snake.prototype._fill = function(options) {
 
 Snake.prototype.turnLeft = function () {
 
+    if (this.currentRoute) {
+        this.nextRotate = 'left';
+        return;
+    }
+    this.currentRoute = 'left';
     if (this._vy !== 0) {
         this._vx = -this._vy * this._side;
         this._vy = 0;
@@ -107,6 +129,11 @@ Snake.prototype.turnLeft = function () {
 
 Snake.prototype.turnRight = function () {
 
+    if (this.currentRoute) {
+        this.nextRotate = 'right';
+        return;
+    }
+    this.currentRoute = 'right';
     if (this._vy !== 0) {
         this._vx = this._vy * this._side;
         this._vy = 0;
@@ -118,7 +145,7 @@ Snake.prototype.turnRight = function () {
 };
 
 Snake.prototype.extend = function () {
-    var last = this.slice().pop();
+    var last = this.segments.slice().pop();
     var segment = last.clone();
 
     segment.vx = last.vx;
@@ -134,13 +161,13 @@ Snake.prototype.extend = function () {
         segment.position.y ++;
     }
 
-    this.push(segment);
+    this.segments.push(segment);
     this.scene.add(segment);
 };
 
 Snake.prototype.appendToScene = function(scene) {
     this.scene = scene;
-    this.forEach(function (item) {
+    this.segments.forEach(function (item) {
         scene.add(item);
     });
 };

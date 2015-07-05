@@ -27,17 +27,17 @@ var snake = require('./js/snake')({
 })
 
 
-camera.follow(snake[0], 1);
+camera.follow(snake.getHead(), 1);
 var scene = levels.get('simple');
 snake.appendToScene(scene);
 
 // TODO move this somewhere
 gameLoop.add(function () {
-    var head = [snake[0]];
+    var heads = [snake.getHead()];
 
-    if (collisions(head, scene.walls)) {
+    if (collisions(heads, scene.walls)) {
         gameLoop.pause();
-    } else if (collisions(head, scene.coins)) {
+    } else if (collisions(heads, scene.coins)) {
         scene.replaceCoin();
         snake.extend();
     }
