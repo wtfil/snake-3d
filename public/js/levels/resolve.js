@@ -1,6 +1,7 @@
 var fs = require('fs');
 var maps = {
-    simple: fs.readFileSync(__dirname + '/maps/simple', 'utf8')
+    simple: fs.readFileSync(__dirname + '/maps/simple', 'utf8'),
+    empty: fs.readFileSync(__dirname + '/maps/empty', 'utf8')
 };
 
 function resolve(name) {

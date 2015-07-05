@@ -1,6 +1,6 @@
 var width = window.innerWidth;
 var height = window.innerHeight;
-//width = height;
+width = height / 4 * 3;
 
 var THREE = require('three');
 var debounce = require('debounce');
@@ -26,8 +26,8 @@ var snake = require('./js/snake')({
     length: 5
 })
 
-camera.follow(snake[0], 3);
 
+camera.follow(snake[0], 1);
 var scene = levels.get('simple');
 snake.appendToScene(scene);
 

@@ -38,7 +38,7 @@ function pyramid(options) {
 function segment(options) {
     var geometry = new THREE.CylinderGeometry(0.3, 0.3, 0.9, 5);
     var material = new THREE.MeshLambertMaterial({
-        color: 0xff0000
+        color: 0xff0000,
     });
     var item = new THREE.Mesh(geometry, material);
     item.position = options.position.clone();
@@ -66,7 +66,6 @@ function coin(options) {
 function light(position) {
     var item = new THREE.DirectionalLight(0xffffff, 1);
     item.position = position;
-
     return item;
 }
 

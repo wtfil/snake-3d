@@ -6,14 +6,15 @@ var sin = Math.sin;
 var PI = Math.PI;
 var PI_2 = Math.PI / 2;
 
-var DEFAULT_Z = 3.5;
-var PITCH  = PI / 5;
+var DEFAULT_Z = 4;
+var PITCH  = PI / 4;
+var PITCH  = PI / 20 * 2.5;
 var V_ROLL = PI / 20;
 var V_PITCH = PI / 10;
 var V_Z = DEFAULT_Z / 10;
 
 function Camera(options) {
-    THREE.PerspectiveCamera.call(this, 75, options.ratio, 0.1, 13);
+    THREE.PerspectiveCamera.call(this, 100, options.ratio, 0.1, 7);
 
     this.rotation.order = 'ZXY';
     this.rotation.x = PITCH;
