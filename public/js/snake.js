@@ -13,8 +13,8 @@ function getRotateAngle(vx, vy) {
         return Math.PI / 2;
     } else if (vy < 0) {
         return -Math.PI / 2;
-    } else if (vx > 0) {
-        return Math.PI
+    } else if (vx < 0) {
+        return Math.PI;
     } else {
         return 0;
     }
@@ -94,12 +94,13 @@ Snake.prototype._fill = function(options) {
     var singY = getSign(this._vy);
     var rotateAngle = getRotateAngle(this._vx, this._vy);
     var i = 0;
-    var segment, line;
+    var segment, line, componentName;
 
     for (; i < options.length; i ++) {
         position = position.clone();
+        componentName = i === 0 ? 'head' : 'segment';
 
-        segment = components.segment({
+        segment = components[componentName]({
             position: position
         });
         segment.vx = this._vx;

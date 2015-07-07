@@ -70,15 +70,43 @@ function segment(options) {
         .add({x: 0, y: 0, z: H / 2});
     return item;
 }
-function line(options) {
-    var material = new THREE.LineBasicMaterial({
-        color: 0xffffff,
-        linewidth: 4
-    });
+
+function head(options) {
     var geometry = new THREE.Geometry();
-    geometry.vertices.push(options.start);
-    geometry.vertices.push(options.end);
-    return new THREE.Line(geometry, material);
+    var material = new THREE.MeshLambertMaterial({
+        color: 0xff0000,
+        wireframe: true
+    });
+    var H = 0.2, P = 0.1, S = 1;
+    function push(x, y, z) {
+        geometry.vertices.push(new THREE.Vector3(x, y, z));
+    }
+    function fase(a, b, c, color) {
+        color = color && new THREE.Color(color);
+        geometry.faces.push(new THREE.Face3(a, b, c, null, color));
+    }
+    push(0, 0.2, 0)
+    push(0, 0.5, 0.2)
+    push(0, 0.8, 0)
+    push(0.5, 0.1, 0)
+    push(0.5, 0.5, 0.3)
+    push(0.5, 0.9, 0)
+    push(1, 0.5, 0)
+
+    fase(0, 1, 2)
+    fase(0, 1, 3)
+    fase(0, 1, 4)
+    fase(1, 2, 4)
+    fase(1, 2, 5)
+    fase(3, 4, 6)
+    fase(4, 5, 6)
+
+    geometry.computeBoundingSphere();
+    THREE.GeometryUtils.center(geometry);
+    var item = new THREE.Mesh(geometry, material);
+    item.position = options.position.clone()
+        .add({x: 0, y: 0, z: 0.15});
+    return item;
 }
 
 function coin(options) {
@@ -102,7 +130,7 @@ function light(position) {
 }
 
 module.exports = {
-    line: line,
+    head: head,
     plane: plane,
     coin: coin,
     pyramid: pyramid,
