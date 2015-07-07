@@ -33,7 +33,7 @@ snake.appendToScene(scene);
 
 // TODO move this somewhere
 gameLoop.add(function () {
-    var heads = [snake.getHead()];
+    var heads = [snake.getHead().object];
 
     if (collisions(heads, scene.walls)) {
         gameLoop.pause();

@@ -48,6 +48,16 @@ Segment.prototype.move = function () {
     this.object.position.x += this.vx;
     this.object.position.y += this.vy;
 };
+Segment.prototype.addPosition = function (x, y) {
+    this.object.position.add({x: x, y: y, z: 0});
+}
+Segment.prototype.clone = function () {
+    var segment = Object.create(Segment.prototype);
+    segment.object = this.object.clone();
+    segment.vx = this.vx;
+    segment.vy = this.vy;
+    return segment;
+}
 
 function Snake(options) {
     if (options.length < 2) {
@@ -171,21 +181,18 @@ Snake.prototype.extend = function () {
     var last = this.segments.slice().pop();
     var segment = last.clone();
 
-    segment.vx = last.vx;
-    segment.vy = last.vy;
-
     if (segment.vx > 0) {
-        segment.position.x --;
+        segment.addPosition(-1, 0);
     } else if (segment.vx < 0) {
-        segment.position.x ++;
+        segment.addPosition(1, 0);
     } else if (segment.vy > 0) {
-        segment.position.y --;
+        segment.addPosition(0, -1);
     } else {
-        segment.position.y ++;
+        segment.addPosition(0, 1);
     }
 
     this.segments.push(segment);
-    this.showSegment(segment);
+    segment.appendToScene(this.scene);
 };
 
 Snake.prototype.appendToScene = function(scene) {
