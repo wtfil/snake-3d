@@ -20,6 +20,35 @@ function getRotateAngle(vx, vy) {
     }
 }
 
+function Segment(options) {
+    this.object = components[options.componentName]({
+        position: options.position
+    });
+    this.vx = options.vx;
+    this.vy = options.vy;
+    this.updateRotation();
+}
+
+Segment.prototype.updateRotation = function () {
+    var rotateAngle = getRotateAngle(this.vx, this.vy);
+    this.object.rotation.z = rotateAngle;
+};
+Segment.prototype.appendToScene = function (scene) {
+    var edges = new THREE.EdgesHelper(this.object, 0xffffff);
+    edges.material.linewidth = 2;
+    scene.add(this.object);
+    scene.add(edges);
+};
+Segment.prototype.updateSpeed = function (vx, vy) {
+    this.vx = vx;
+    this.vy = vy;
+    this.updateRotation();
+}
+Segment.prototype.move = function () {
+    this.object.position.x += this.vx;
+    this.object.position.y += this.vy;
+};
+
 function Snake(options) {
     if (options.length < 2) {
         throw new Error('Snake could not be less then 2 bars lenght');
@@ -58,9 +87,7 @@ Snake.prototype._onGameLoop = function () {
     var curr, prev;
 
     for (i = 0; i < this.segments.length; i ++) {
-        curr = this.segments[i];
-        curr.position.x += curr.vx;
-        curr.position.y += curr.vy;
+        this.segments[i].move();
     }
 
     this._stepsToRotate --;
@@ -72,16 +99,10 @@ Snake.prototype._onGameLoop = function () {
         for (i = this.segments.length - 1; i > 0; i --) {
             curr = this.segments[i];
             prev = this.segments[i - 1];
-            curr.vx = prev.vx;
-            curr.vy = prev.vy;
-            curr.rotation.z = getRotateAngle(curr.vx, curr.vy);
+            curr.updateSpeed(prev.vx, prev.vy);
         }
         curr = this.segments[0];
-
-        curr.vx = this._vx;
-        curr.vy = this._vy;
-        curr.rotation.z = getRotateAngle(curr.vx, curr.vy);
-
+        curr.updateSpeed(this._vx, this._vy);
     }
 
 }
@@ -93,19 +114,18 @@ Snake.prototype._fill = function(options) {
     var singX = getSign(this._vx);
     var singY = getSign(this._vy);
     var rotateAngle = getRotateAngle(this._vx, this._vy);
-    var i = 0;
     var segment, line, componentName;
+    var i = 0;
 
     for (; i < options.length; i ++) {
         position = position.clone();
-        componentName = i === 0 ? 'head' : 'segment';
 
-        segment = components[componentName]({
-            position: position
+        var segment = new Segment({
+            position: position,
+            componentName: i === 0 ? 'head' : 'segment',
+            vx: this._vx,
+            vy: this._vy
         });
-        segment.vx = this._vx;
-        segment.vy = this._vy;
-        /*segment.rotation.z = rotateAngle;*/
         this.segments.push(segment);
 
         position.x -= singX;
@@ -168,16 +188,11 @@ Snake.prototype.extend = function () {
     this.showSegment(segment);
 };
 
-Snake.prototype.showSegment = function (segment) {
-    var edges = new THREE.EdgesHelper(segment, 0xffffff, 90 );
-    edges.material.linewidth = 2;
-    this.scene.add(edges);
-    this.scene.add(segment);
-}
-
 Snake.prototype.appendToScene = function(scene) {
     this.scene = scene;
-    this.segments.forEach(this.showSegment.bind(this));
+    this.segments.forEach(function (segment) {
+        segment.appendToScene(scene);
+    });
 };
 
 module.exports = function (options) {

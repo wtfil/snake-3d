@@ -61,17 +61,17 @@ function getSign(val) {
     return val && (val > 0 ? 1 : -1);
 }
 
-Camera.prototype.follow = function (object, distance) {
+Camera.prototype.follow = function (head, distance) {
 
     var _this = this;
-    var angle = getRoll(object.vx, object.vy, 0);
+    var angle = getRoll(head.vx, head.vy, 0);
     var step = 0.05;
 
-    this.position.x = object.position.x + distance * cos(angle);
-    this.position.y = object.position.y + distance * sin(angle);
+    this.position.x = head.object.position.x + distance * cos(angle);
+    this.position.y = head.object.position.y + distance * sin(angle);
 
     gameLoop.add(function () {
-        var current = getRoll(object.vx, object.vy, angle);
+        var current = getRoll(head.vx, head.vy, angle);
         var diff = current - angle;
 
         if (Math.abs(diff) > step / 2) {
@@ -80,8 +80,8 @@ Camera.prototype.follow = function (object, distance) {
             angle = current;
         }
 
-        _this.position.x = object.position.x + distance * cos(angle);
-        _this.position.y = object.position.y + distance * sin(angle);
+        _this.position.x = head.object.position.x + distance * cos(angle);
+        _this.position.y = head.object.position.y + distance * sin(angle);
         _this.rotation.z = angle + PI_2;
     })
 };
