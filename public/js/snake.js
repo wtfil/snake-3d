@@ -9,11 +9,11 @@ function getSign(val) {
 }
 
 function getRotateAngle(vx, vy) {
-    if (vx > 0) {
+    if (vy > 0) {
         return Math.PI / 2;
-    } else if (vx < 0) {
+    } else if (vy < 0) {
         return -Math.PI / 2;
-    } else if (vy > 0) {
+    } else if (vx > 0) {
         return Math.PI
     } else {
         return 0;
@@ -94,15 +94,17 @@ Snake.prototype._fill = function(options) {
     var singY = getSign(this._vy);
     var rotateAngle = getRotateAngle(this._vx, this._vy);
     var i = 0;
-    var segment;
+    var segment, line;
 
     for (; i < options.length; i ++) {
         position = position.clone();
 
-        segment = components.segment({position: position, color: 0xffffff});
+        segment = components.segment({
+            position: position
+        });
         segment.vx = this._vx;
         segment.vy = this._vy;
-        segment.rotation.z = rotateAngle;
+        /*segment.rotation.z = rotateAngle;*/
         this.segments.push(segment);
 
         position.x -= singX;

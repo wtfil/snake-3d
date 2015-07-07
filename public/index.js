@@ -27,7 +27,7 @@ var snake = require('./js/snake')({
 })
 
 
-camera.follow(snake.getHead(), 1);
+camera.follow(snake.getHead(), 5);
 var scene = levels.get('simple');
 snake.appendToScene(scene);
 
