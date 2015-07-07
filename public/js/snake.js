@@ -165,14 +165,19 @@ Snake.prototype.extend = function () {
     }
 
     this.segments.push(segment);
-    this.scene.add(segment);
+    this.showSegment(segment);
 };
+
+Snake.prototype.showSegment = function (segment) {
+    var edges = new THREE.EdgesHelper(segment, 0xffffff, 90 );
+    edges.material.linewidth = 2;
+    this.scene.add(edges);
+    this.scene.add(segment);
+}
 
 Snake.prototype.appendToScene = function(scene) {
     this.scene = scene;
-    this.segments.forEach(function (item) {
-        scene.add(item);
-    });
+    this.segments.forEach(this.showSegment.bind(this));
 };
 
 module.exports = function (options) {

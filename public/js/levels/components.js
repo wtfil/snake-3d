@@ -39,15 +39,14 @@ function segment(options) {
     var geometry = new THREE.Geometry();
     var material = new THREE.MeshLambertMaterial({
         color: 0xff0000,
-        wireframe: true,
+        side: THREE.DoubleSide
     });
     var H = 0.2, P = 0.2, S = 1;
     function push(x, y, z) {
         geometry.vertices.push(new THREE.Vector3(x, y, z));
     }
-    function fase(a, b, c, color) {
-        color = color && new THREE.Color(color);
-        geometry.faces.push(new THREE.Face3(a, b, c, null, color));
+    function face(a, b, c) {
+        geometry.faces.push(new THREE.Face3(a, b, c));
     }
     push(0, P + 0, 0)
     push(0, S / 2, H)
@@ -56,12 +55,12 @@ function segment(options) {
     push(1, S / 2, H)
     push(1, S - P, 0)
 
-    fase(0, 1, 2)
-    fase(0, 1, 3)
-    fase(0, 1, 4)
-    fase(3, 4, 5)
-    fase(1, 2, 4)
-    fase(1, 2, 5)
+    face(0, 1, 2)
+    face(0, 1, 3)
+    face(3, 4, 1)
+    face(3, 4, 5)
+    face(1, 2, 4)
+    face(4, 5, 2)
 
     geometry.computeBoundingSphere();
     THREE.GeometryUtils.center(geometry);
@@ -75,15 +74,14 @@ function head(options) {
     var geometry = new THREE.Geometry();
     var material = new THREE.MeshLambertMaterial({
         color: 0xff0000,
-        wireframe: true
+        side: THREE.DoubleSide
     });
     var H = 0.2, P = 0.1, S = 1;
     function push(x, y, z) {
         geometry.vertices.push(new THREE.Vector3(x, y, z));
     }
-    function fase(a, b, c, color) {
-        color = color && new THREE.Color(color);
-        geometry.faces.push(new THREE.Face3(a, b, c, null, color));
+    function face(a, b, c) {
+        geometry.faces.push(new THREE.Face3(a, b, c));
     }
     push(0, 0.2, 0)
     push(0, 0.5, 0.2)
@@ -93,13 +91,13 @@ function head(options) {
     push(0.5, 0.9, 0)
     push(1, 0.5, 0)
 
-    fase(0, 1, 2)
-    fase(0, 1, 3)
-    fase(0, 1, 4)
-    fase(1, 2, 4)
-    fase(1, 2, 5)
-    fase(3, 4, 6)
-    fase(4, 5, 6)
+    face(0, 1, 2)
+    face(0, 1, 3)
+    face(3, 4, 1)
+    face(1, 2, 4)
+    face(4, 5, 2)
+    face(3, 4, 6)
+    face(4, 5, 6)
 
     geometry.computeBoundingSphere();
     THREE.GeometryUtils.center(geometry);
