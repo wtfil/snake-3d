@@ -1,3 +1,5 @@
+require('./js/stats');
+
 var width = window.innerWidth;
 var height = window.innerHeight;
 width = height / 4 * 3;
