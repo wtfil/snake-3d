@@ -73,8 +73,8 @@ function segment(options) {
     geometry.center();
     item = new THREE.Mesh(geometry, material);
     item.position.set(
-		options.position.x,
-		options.position.y,
+		options.position.x + 0.05,
+		options.position.y + 0.05,
 		options.position.z + H / 2
     );
     return item;
@@ -114,8 +114,8 @@ function head(options) {
     geometry.center();
     item = new THREE.Mesh(geometry, material);
     item.position.set(
-		options.position.x,
-		options.position.y,
+		options.position.x + 0.05,
+		options.position.y + 0.05,
 		options.position.z + 0.15
     );
     return item;

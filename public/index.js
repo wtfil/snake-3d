@@ -2,7 +2,12 @@ require('./js/stats');
 
 var width = window.innerWidth;
 var height = window.innerHeight;
-width = height / 4 * 3;
+var RATIO = 3 / 4
+if (height * RATIO > width) {
+	height = width / RATIO;
+} else {
+	width = height * RATIO;
+}
 
 var THREE = require('three');
 var control = require('./js/control');

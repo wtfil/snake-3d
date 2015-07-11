@@ -1,3 +1,5 @@
+var ACCURACY = 0.1;
+
 function checkGroups (a, b) {
     var i, j, pa, pb;
 
@@ -7,16 +9,16 @@ function checkGroups (a, b) {
             pb = b[j].position || b[j];
 
             if (
-                (pa.x > pb.x - 1) &&
-                (pa.x < pb.x + 1) &&
-                (pa.y > pb.y - 1) &&
-                (pa.y < pb.y + 1) &&
-                (Math.abs(pa.x - pb.x) < 1) &&
-                (Math.abs(pa.y - pb.y) < 1)
+                (pa.x > pb.x - 1 - ACCURACY) &&
+                (pa.x < pb.x + 1 + ACCURACY) &&
+                (pa.y > pb.y - 1 - ACCURACY) &&
+                (pa.y < pb.y + 1 + ACCURACY) &&
+                (Math.abs(pa.x - pb.x) < 1 - ACCURACY) &&
+                (Math.abs(pa.y - pb.y) < 1 - ACCURACY)
             ) {
                 return {
-                    x: pa.x,
-                    y: pa.y
+					a: {x: pa.x, y: pa.y},
+					b: {x: pb.x, y: pb.y}
                 };
             }
 
@@ -25,11 +27,5 @@ function checkGroups (a, b) {
 
     return null;
 }
-
-function check(snake, walls, items) {
-    return checkGroups(snake, walls, 'walls')
-        .concat(checkGroups(snake, items, 'items'));
-}
-
 
 module.exports = checkGroups;
