@@ -91,8 +91,7 @@ Level.prototype.drawMap = function (map) {
 }
 
 function applyToScene(scene, items) {
-	items = Array.isArray(items) ? items : [items];
-	items.forEach(scene.add.bind(scene));
+	scene.add.apply(scene, [].concat(items));
 }
 
 function stringToMap(level) {

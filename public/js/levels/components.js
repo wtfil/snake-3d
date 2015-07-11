@@ -2,23 +2,23 @@ var THREE = require('three');
 var height = Math.pow(2, -1/2);
 
 function plane(options) {
-
-    var geometry = new THREE.PlaneGeometry(0.9, 0.9);
+    var geometry = new THREE.PlaneBufferGeometry(0.9, 0.9);
     var material = new THREE.MeshBasicMaterial({
         side: THREE.DoubleSide,
         color: 0x66FFFF
     });
     var item = new THREE.Mesh( geometry, material );
-    item.position = options.position;
-    item.position.x += 0.05;
-    item.position.y += 0.05;
+    item.position.set(
+		options.position.x + 0.05,
+		options.position.y + 0.05,
+		options.position.z
+    );
 
     return item;
 
 }
 
 function pyramid(options) {
-
     var geometry = new THREE.CylinderGeometry(0, height, height, 4);
     var material = new THREE.MeshLambertMaterial({
         color: options.color
@@ -26,11 +26,16 @@ function pyramid(options) {
 
     var item = new THREE.Mesh(geometry, material);
     var sing = options.up ? 1 : -1;
-
-    item.position = options.position.clone();
-    item.rotation.x = sing * Math.PI / 2;
-    item.position.z += sing * (height / 2 + 0.1);
-    item.rotation.y = Math.PI / 4;
+    item.position.set(
+		options.position.x,
+		options.position.y,
+		options.position.z + sing * (height / 2 + 0.1)
+    );
+    item.rotation.set(
+		sing * Math.PI / 2,
+		Math.PI / 4,
+		0
+    );
 
     return [item, plane({color: 0x66FFFF, position: options.position})];
 }
@@ -38,10 +43,12 @@ function pyramid(options) {
 function segment(options) {
     var geometry = new THREE.Geometry();
     var material = new THREE.MeshLambertMaterial({
-        color: 0xff0000,
-        side: THREE.DoubleSide
+		color: 0xff0000,
+		side: THREE.DoubleSide
     });
     var H = 0.2, P = 0.2, S = 1;
+    var item;
+
     function push(x, y, z) {
         geometry.vertices.push(new THREE.Vector3(x, y, z));
     }
@@ -63,20 +70,24 @@ function segment(options) {
     face(4, 5, 2)
 
     geometry.computeBoundingSphere();
-    THREE.GeometryUtils.center(geometry);
-    var item = new THREE.Mesh(geometry, material);
-    item.position = options.position.clone()
-        .add({x: 0, y: 0, z: H / 2});
+    geometry.center();
+    item = new THREE.Mesh(geometry, material);
+    item.position.set(
+		options.position.x,
+		options.position.y,
+		options.position.z + H / 2
+    );
     return item;
 }
 
 function head(options) {
     var geometry = new THREE.Geometry();
-    var material = new THREE.MeshLambertMaterial({
+    var material = new THREE.MeshNormalMaterial({
         color: 0xff0000,
         side: THREE.DoubleSide
     });
     var H = 0.2, P = 0.1, S = 1;
+    var item;
     function push(x, y, z) {
         geometry.vertices.push(new THREE.Vector3(x, y, z));
     }
@@ -100,10 +111,13 @@ function head(options) {
     face(4, 5, 6)
 
     geometry.computeBoundingSphere();
-    THREE.GeometryUtils.center(geometry);
-    var item = new THREE.Mesh(geometry, material);
-    item.position = options.position.clone()
-        .add({x: 0, y: 0, z: 0.15});
+    geometry.center();
+    item = new THREE.Mesh(geometry, material);
+    item.position.set(
+		options.position.x,
+		options.position.y,
+		options.position.z + 0.15
+    );
     return item;
 }
 
@@ -113,9 +127,11 @@ function coin(options) {
         color: 0xE6B800
     });
     var item = new THREE.Mesh(geometry, material);
-
-    item.position = options.position;
-    item.position.z += 0.5;
+    item.position.set(
+		options.position.x,
+		options.position.y,
+		options.position.z + 0.5
+    );
     item.rotation.z = Math.PI / 5;
 
     return item;
