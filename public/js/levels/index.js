@@ -86,6 +86,7 @@ Level.prototype.drawMap = function (map) {
     this.add(new THREE.AmbientLight( 0x212223));
     this.add(components.light(new THREE.Vector3(0, 0, 1)));
     this.add(components.light(new THREE.Vector3(5, 5, -1)));
+	this.fog = new THREE.Fog( 0x000000, 3, 10 );
 
     return this;
 }

@@ -3,7 +3,7 @@ var height = window.innerHeight;
 width = height / 4 * 3;
 
 var THREE = require('three');
-var debounce = require('debounce');
+var control = require('./js/control');
 var levels = require('./js/levels');
 var renderLoop = require('./js/core/render-loop');
 var gameLoop = require('./js/core/game-loop');
@@ -29,7 +29,6 @@ var snake = require('./js/snake')({
 
 camera.follow(snake.getHead(), 3);
 var scene = levels.get('simple');
-scene.fog = new THREE.Fog( 0x000000, 3, 10 );
 snake.appendToScene(scene);
 
 // TODO move this somewhere
@@ -63,51 +62,10 @@ renderer.domElement.width = width;
 renderer.domElement.height = height;
 document.body.appendChild(renderer.domElement);
 
-window.addEventListener('keypress', debounce(onKeyPressed, 200, true));
-window.addEventListener('touchstart', onTouchStart);
-window.addEventListener('touchend', onTouchEnd);
-
-function onKeyPressed(e) {
-    var code = e.keyCode;
-
-    // 119 87 1094 1062 w
-    // 115 83 1099 1067 s
-    // 97 65 1092 1064 a
-    // 100 68 1074 1042 d
-    // 114 r
-    // 112 p
-
-    if ([100, 68, 1074, 1042].indexOf(code) !== -1) {
-        snake.turnRight();
-    }
-
-    if ([97, 65, 1064, 1092].indexOf(code) !== -1) {
-        snake.turnLeft();
-    }
-
-    if ([114].indexOf(code) !== -1) {
-        camera.invertSide();
-    }
-
-    if ([112].indexOf(code) !== -1) {
-        gameLoop.pause();
-    }
-}
-
-var touchStartX = null;
-function onTouchStart(e) {
-	e.preventDefault();
-	touchStartX = e.changedTouches[0].pageX;
-}
-function onTouchEnd(e) {
-	e.preventDefault();
-	var diff = e.changedTouches[0].pageX - touchStartX;
-	if (diff > 0) {
-		snake.turnRight();
-	} else {
-		snake.turnLeft();
-	}
-}
+control
+	.on('left', snake.turnLeft.bind(snake))
+	.on('right', snake.turnRight.bind(snake))
+	.on('pause', gameLoop.pause);
 
 setTimeout(function () {
     renderLoop(function () {
