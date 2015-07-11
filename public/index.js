@@ -27,8 +27,9 @@ var snake = require('./js/snake')({
 })
 
 
-camera.follow(snake.getHead(), 5);
+camera.follow(snake.getHead(), 3);
 var scene = levels.get('simple');
+scene.fog = new THREE.Fog( 0x000000, 3, 10 );
 snake.appendToScene(scene);
 
 // TODO move this somewhere
@@ -63,6 +64,8 @@ renderer.domElement.height = height;
 document.body.appendChild(renderer.domElement);
 
 window.addEventListener('keypress', debounce(onKeyPressed, 200, true));
+window.addEventListener('touchstart', onTouchStart);
+window.addEventListener('touchend', onTouchEnd);
 
 function onKeyPressed(e) {
     var code = e.keyCode;
@@ -89,6 +92,21 @@ function onKeyPressed(e) {
     if ([112].indexOf(code) !== -1) {
         gameLoop.pause();
     }
+}
+
+var touchStartX = null;
+function onTouchStart(e) {
+	e.preventDefault();
+	touchStartX = e.changedTouches[0].pageX;
+}
+function onTouchEnd(e) {
+	e.preventDefault();
+	var diff = e.changedTouches[0].pageX - touchStartX;
+	if (diff > 0) {
+		snake.turnRight();
+	} else {
+		snake.turnLeft();
+	}
 }
 
 setTimeout(function () {
