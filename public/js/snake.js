@@ -21,14 +21,31 @@ function getRotateAngle(vx, vy) {
 }
 
 function Segment(options) {
-    this.object = components[options.componentName]({
-        position: options.position
+    this.object = options.object || components[options.componentName]({
+        position: options.position,
+        length: options.length
     });
+    this.options = options;
     this.vx = options.vx;
     this.vy = options.vy;
+    this.getInitialSteps();
     this.updateRotation();
 }
 
+Segment.prototype.getInitialSteps = function (options) {
+	var d;
+	var position = this.options.position || this.object.position;
+	if (this.vx > 0) {
+		d = 1 - position.x % 1;
+	} else if (this.vx < 0) {
+		d = position.x % 1;
+	} else if (this.options.vy > 0) {
+		d = 1 - position.y % 1
+	} else {
+		d = this.position.y % 1
+	}
+	this.stepsToRotate = ~~(d / V);
+};
 Segment.prototype.updateRotation = function () {
     var rotateAngle = getRotateAngle(this.vx, this.vy);
     this.object.rotation.z = rotateAngle;
@@ -44,19 +61,24 @@ Segment.prototype.updateSpeed = function (vx, vy) {
     this.vy = vy;
     this.updateRotation();
 }
-Segment.prototype.move = function () {
+Segment.prototype.move = function (prev) {
     this.object.position.x += this.vx;
     this.object.position.y += this.vy;
+    this.stepsToRotate--;
+    if (!this.stepsToRotate && prev) {
+    	this.stepsToRotate = ~~(1 / V);
+		this.updateSpeed(prev.vx, prev.vy);
+    }
 };
 Segment.prototype.addPosition = function (x, y) {
     this.object.position.add({x: x, y: y, z: 0});
 }
 Segment.prototype.clone = function () {
-    var segment = Object.create(Segment.prototype);
-    segment.object = this.object.clone();
-    segment.vx = this.vx;
-    segment.vy = this.vy;
-    return segment;
+	return new Segment({
+		object: this.object.clone(),
+		vx: this.vx,
+		vy: this.vy
+	});
 }
 
 function Snake(options) {
@@ -65,11 +87,12 @@ function Snake(options) {
     }
 
     this.segments = [];
+    this.segmentLength = 0.8;
     this._vx = options.direction.x * V;
     this._vy = options.direction.y * V;
     this._side = 1;
     this._fill(options);
-    this._updateCounters();
+    this.updateHeadCounter();
     gameLoop.add(this._onGameLoop.bind(this));
 }
 
@@ -79,7 +102,7 @@ Snake.prototype.getHead = function () {
     return this.segments[0];
 };
 
-Snake.prototype._updateCounters = function () {
+Snake.prototype.updateHeadCounter = function () {
     // TODO  next rotate does works properly, needs to be fixed
     if (this.nextRotate === 'left') {
         this.turnLeft();
@@ -96,23 +119,18 @@ Snake.prototype._onGameLoop = function () {
     var prevAngle, angle;
     var curr, prev;
 
-    for (i = 0; i < this.segments.length; i ++) {
-        this.segments[i].move();
+    for (i = this.segments.length - 1; i > 0; i --) {
+        curr = this.segments[i];
+        prev = this.segments[i - 1];
+        curr.move(prev);
     }
+    this.segments[0].move();
 
     this._stepsToRotate --;
 
     if (!this._stepsToRotate) {
-
-        this._updateCounters();
-
-        for (i = this.segments.length - 1; i > 0; i --) {
-            curr = this.segments[i];
-            prev = this.segments[i - 1];
-            curr.updateSpeed(prev.vx, prev.vy);
-        }
-        curr = this.segments[0];
-        curr.updateSpeed(this._vx, this._vy);
+        this.updateHeadCounter();
+        this.segments[0].updateSpeed(this._vx, this._vy);
     }
 
 }
@@ -121,8 +139,8 @@ Snake.prototype._onGameLoop = function () {
 Snake.prototype._fill = function(options) {
     var headPosition = new THREE.Vector3(options.position.x, options.position.y, 0);
     var position = headPosition;
-    var singX = getSign(this._vx);
-    var singY = getSign(this._vy);
+    var singX = getSign(this._vx) * this.segmentLength;
+    var singY = getSign(this._vy) * this.segmentLength;
     var rotateAngle = getRotateAngle(this._vx, this._vy);
     var segment, line, componentName;
     var i = 0;
@@ -132,6 +150,7 @@ Snake.prototype._fill = function(options) {
 
         var segment = new Segment({
             position: position,
+			length: this.segmentLength,
             componentName: i === 0 ? 'head' : 'segment',
             vx: this._vx,
             vy: this._vy
@@ -180,15 +199,16 @@ Snake.prototype.turnRight = function () {
 Snake.prototype.extend = function () {
     var last = this.segments.slice().pop();
     var segment = last.clone();
+    var l = this.segmentLength;
 
     if (segment.vx > 0) {
-        segment.addPosition(-1, 0);
+        segment.addPosition(-l, 0);
     } else if (segment.vx < 0) {
-        segment.addPosition(1, 0);
+        segment.addPosition(l, 0);
     } else if (segment.vy > 0) {
-        segment.addPosition(0, -1);
+        segment.addPosition(0, -l);
     } else {
-        segment.addPosition(0, 1);
+        segment.addPosition(0, l);
     }
 
     this.segments.push(segment);
