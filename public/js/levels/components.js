@@ -46,7 +46,8 @@ function segment(options) {
 		color: 0xff0000,
 		side: THREE.DoubleSide
     });
-    var H = 0.2, P = 0.2, S = 1;
+    var H = 0.2, P = 0.25, S = 1;
+    var l = options.size;
     var item;
 
     function push(x, y, z) {
@@ -58,9 +59,9 @@ function segment(options) {
     push(0, P + 0, 0)
     push(0, S / 2, H)
     push(0, S - P, 0)
-    push(1, P + 0, 0)
-    push(1, S / 2, H)
-    push(1, S - P, 0)
+    push(l, P + 0, 0)
+    push(l, S / 2, H)
+    push(l, S - P, 0)
 
     face(0, 1, 2)
     face(0, 1, 3)
@@ -73,7 +74,7 @@ function segment(options) {
     geometry.center();
     item = new THREE.Mesh(geometry, material);
     item.position.set(
-		options.position.x + 0.05,
+		options.position.x + 0.1,
 		options.position.y + 0.05,
 		options.position.z + H / 2
     );
@@ -87,6 +88,7 @@ function head(options) {
         side: THREE.DoubleSide
     });
     var H = 0.2, P = 0.1, S = 1;
+    var l = options.size;
     var item;
     function push(x, y, z) {
         geometry.vertices.push(new THREE.Vector3(x, y, z));
@@ -97,10 +99,10 @@ function head(options) {
     push(0, 0.2, 0)
     push(0, 0.5, 0.2)
     push(0, 0.8, 0)
-    push(0.5, 0.1, 0)
-    push(0.5, 0.5, 0.3)
-    push(0.5, 0.9, 0)
-    push(1, 0.5, 0)
+    push(l / 2, 0.1, 0)
+    push(l / 2, 0.5, 0.3)
+    push(l / 2, 0.9, 0)
+    push(l, 0.5, 0)
 
     face(0, 1, 2)
     face(0, 1, 3)
