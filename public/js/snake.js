@@ -21,26 +21,27 @@ function getRotateAngle(vx, vy) {
 }
 
 function Segment(options) {
-    this.object = options.object || components[options.componentName]({
+    this.object = components[options.componentName]({
         position: options.position,
-        length: options.length
+        size: options.size
     });
-    this.options = options;
+    this.size = options.size;
+    this.componentName = options.componentName;
+    this.position = options.position.clone();
     this.vx = options.vx;
     this.vy = options.vy;
-    this.getInitialSteps();
+    this.setInitalCoutner();
     this.updateRotation();
 }
 
-Segment.prototype.getInitialSteps = function (options) {
+Segment.prototype.setInitalCoutner = function (options) {
 	var d;
-	var position = this.options.position || this.object.position;
 	if (this.vx > 0) {
-		d = 1 - position.x % 1;
+		d = 1 - this.position.x % 1;
 	} else if (this.vx < 0) {
-		d = position.x % 1;
-	} else if (this.options.vy > 0) {
-		d = 1 - position.y % 1
+		d = this.position.x % 1;
+	} else if (this.vy > 0) {
+		d = 1 - this.position.y % 1
 	} else {
 		d = this.position.y % 1
 	}
@@ -64,6 +65,8 @@ Segment.prototype.updateSpeed = function (vx, vy) {
 Segment.prototype.move = function (prev) {
     this.object.position.x += this.vx;
     this.object.position.y += this.vy;
+    this.position.x += this.vx;
+    this.position.y += this.vy;
     this.stepsToRotate--;
     if (!this.stepsToRotate && prev) {
     	this.stepsToRotate = ~~(1 / V);
@@ -72,10 +75,14 @@ Segment.prototype.move = function (prev) {
 };
 Segment.prototype.addPosition = function (x, y) {
     this.object.position.add({x: x, y: y, z: 0});
+    this.position.add({x: x, y: y, z: 0});
+    this.setInitalCoutner();
 }
 Segment.prototype.clone = function () {
 	return new Segment({
-		object: this.object.clone(),
+		componentName: this.componentName,
+		position: this.position.clone(),
+		size: this.size,
 		vx: this.vx,
 		vy: this.vy
 	});
@@ -150,7 +157,7 @@ Snake.prototype._fill = function(options) {
 
         var segment = new Segment({
             position: position,
-			length: this.segmentLength,
+			size: this.segmentLength,
             componentName: i === 0 ? 'head' : 'segment',
             vx: this._vx,
             vy: this._vy

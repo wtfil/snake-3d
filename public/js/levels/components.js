@@ -47,7 +47,7 @@ function segment(options) {
 		side: THREE.DoubleSide
     });
     var H = 0.2, P = 0.25, S = 1;
-    var l = options.length;
+    var l = options.size;
     var item;
 
     function push(x, y, z) {
@@ -88,7 +88,7 @@ function head(options) {
         side: THREE.DoubleSide
     });
     var H = 0.2, P = 0.1, S = 1;
-    var l = options.length;
+    var l = options.size;
     var item;
     function push(x, y, z) {
         geometry.vertices.push(new THREE.Vector3(x, y, z));
